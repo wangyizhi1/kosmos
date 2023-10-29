@@ -55,8 +55,8 @@ func NewNodeLeaseController(leafClient kubernetes.Interface, root client.Client,
 }
 
 func (c *NodeLeaseController) Start(ctx context.Context) error {
-	go wait.UntilWithContext(ctx, c.syncLease, c.leaseInterval)
-	go wait.UntilWithContext(ctx, c.syncNodeStatus, c.statusInterval)
+	go wait.UntilWithContext(ctx, c.syncLease, c.leaseInterval)       // lease
+	go wait.UntilWithContext(ctx, c.syncNodeStatus, c.statusInterval) // status
 
 	<-ctx.Done()
 	return nil

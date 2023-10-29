@@ -58,6 +58,7 @@ func (r *LeafPodReconciler) Reconcile(ctx context.Context, request reconcile.Req
 
 	podCopy := pod.DeepCopy()
 
+	// TODO @byh job
 	if ShouldSkipStatusUpdate(podCopy) {
 		return reconcile.Result{}, nil
 	}
@@ -77,6 +78,7 @@ func (r *LeafPodReconciler) safeDeletePodInRootCluster(ctx context.Context, requ
 	rPod := corev1.Pod{}
 	err := r.RootClient.Get(ctx, request.NamespacedName, &rPod)
 	if err == nil || !apierrors.IsNotFound(err) {
+		// TODO @byh requeue
 		rPodCopy := rPod.DeepCopy()
 
 		deleteOptions := metav1.DeleteOptions{
@@ -103,6 +105,7 @@ func (r *LeafPodReconciler) SetupWithManager(mgr manager.Manager) error {
 		WithOptions(controller.Options{}).
 		For(&corev1.Pod{}, builder.WithPredicates(predicate.Funcs{
 			CreateFunc: func(createEvent event.CreateEvent) bool {
+				// TODO @byh false
 				return true
 			},
 			UpdateFunc: func(updateEvent event.UpdateEvent) bool {

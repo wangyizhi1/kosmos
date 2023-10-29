@@ -316,6 +316,8 @@ func IsVirtualNode(node *corev1.Node) bool {
 	return valStr == KosmosNodeValue
 }
 
+// IsVirtualPod
+// TODO change func name
 func IsVirtualPod(pod *corev1.Pod) bool {
 	if pod.Labels != nil && pod.Labels[KosmosPodLabel] == "true" {
 		return true

@@ -58,6 +58,8 @@ func (r *RootPodReconciler) Reconcile(ctx context.Context, request reconcile.Req
 			if err != nil && errors.IsNotFound(err) {
 				return reconcile.Result{}, nil
 			}
+			// TODO !errors.IsNotFound
+
 			// delete leaf pod
 			if err := r.DeletePodInLeafCluster(ctx, leafPod); err != nil {
 				klog.Errorf("delete pod in leaf error[2]: %v,  %s", err, request.NamespacedName)
@@ -70,6 +72,7 @@ func (r *RootPodReconciler) Reconcile(ctx context.Context, request reconcile.Req
 	}
 
 	// belongs to the current node
+	// TODO
 	if pod.Spec.NodeName != r.NodeName {
 		return reconcile.Result{}, nil
 	}
@@ -530,7 +533,9 @@ func (p *RootPodReconciler) UpdatePodInLeafCluster(ctx context.Context, pod *cor
 	if err != nil {
 		return fmt.Errorf("could not get current pod")
 	}
+	// TODO @byh
 	if !utils.IsKosmosPod(pod) {
+		// TODO @byh
 		klog.Info("Pod is not created by vk, ignore")
 		return nil
 	}
@@ -560,6 +565,7 @@ func (p *RootPodReconciler) DeletePodInLeafCluster(ctx context.Context, pod *cor
 	klog.Infof("Deleting pod %v/%+v", pod.Namespace, pod.Name)
 
 	if !utils.IsKosmosPod(pod) {
+		// TODO @byh
 		klog.Info("Pod is not create by vk, ignore")
 		return nil
 	}
@@ -583,6 +589,7 @@ func (p *RootPodReconciler) DeletePodInLeafCluster(ctx context.Context, pod *cor
 	return nil
 }
 
+// TODO @byh
 func (p *RootPodReconciler) GetPodInLeafCluster(ctx context.Context, namespace string, name string) (*corev1.Pod, error) {
 	pod := &corev1.Pod{}
 	err := p.LeafClient.Get(ctx, types.NamespacedName{

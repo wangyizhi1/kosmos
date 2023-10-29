@@ -104,6 +104,7 @@ var predicatesFunc = predicate.Funcs{
 		obj := deleteEvent.Object.(*clusterlinkv1alpha1.Cluster)
 		return !isRootCluster(obj)
 	},
+	// TODO @wyz
 	GenericFunc: func(genericEvent event.GenericEvent) bool {
 		return false
 	},
@@ -153,6 +154,7 @@ func (c *ClusterController) Reconcile(ctx context.Context, request reconcile.Req
 		return reconcile.Result{}, fmt.Errorf("could not build dynamic client for cluster %s: %v", cluster.Name, err)
 	}
 
+	// TODO
 	kosmosClient, err := kosmosversioned.NewForConfig(config)
 	if err != nil {
 		return reconcile.Result{}, fmt.Errorf("could not build kosmos clientset for cluster %s: %v", cluster.Name, err)
@@ -377,6 +379,7 @@ func (c *ClusterController) createNode(ctx context.Context, cluster *clusterlink
 	if err != nil && errors.IsNotFound(err) {
 		node = utils.BuildNodeTemplate(cluster)
 		node.Status.NodeInfo.KubeletVersion = serverVersion.GitVersion
+		// TODO @wyz
 		node.Status.DaemonEndpoints = corev1.NodeDaemonEndpoints{
 			KubeletEndpoint: corev1.DaemonEndpoint{
 				Port: c.Options.ListenPort,

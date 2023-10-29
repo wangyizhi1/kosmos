@@ -52,6 +52,8 @@ func NewAgentCommand(ctx context.Context) *cobra.Command {
 	return cmd
 }
 
+// TODO clients map
+
 func run(ctx context.Context, opts *options.Options) error {
 	config, err := clientcmd.BuildConfigFromFlags(opts.KubernetesOptions.Master, opts.KubernetesOptions.KubeConfig)
 	if err != nil {
@@ -76,6 +78,12 @@ func run(ctx context.Context, opts *options.Options) error {
 		return fmt.Errorf("could not build kosmos clientset for root cluster: %v", err)
 	}
 
+	dynamicClient, err := dynamic.NewForConfig(config)
+	if err != nil {
+		klog.Errorf("Unable to create dynamicClient: %v", err)
+		return err
+	}
+
 	rootResourceManager := utils.NewResourceManager(rootClient, rootKosmosClient)
 	mgr, err := controllerruntime.NewManager(config, controllerruntime.Options{
 		Logger:                  klog.Background(),
@@ -88,12 +96,6 @@ func run(ctx context.Context, opts *options.Options) error {
 	})
 	if err != nil {
 		return fmt.Errorf("failed to build controller manager: %v", err)
-	}
-
-	dynamicClient, err := dynamic.NewForConfig(config)
-	if err != nil {
-		klog.Errorf("Unable to create dynamicClient: %v", err)
-		return err
 	}
 
 	// add cluster controller
